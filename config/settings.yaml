@@ -1,0 +1,204 @@
+app:
+  environment: paper
+  timezone: UTC
+  log_level: INFO
+
+broker:
+  provider: alpaca
+  paper: true
+
+codex:
+  enabled: true
+
+  runtime:
+    executable: codex
+    mode: app-server
+
+    # Codex must execute outside the source repository during trading.
+    workspace_root: runtime/codex
+
+    startup_timeout_seconds: 30
+    turn_timeout_seconds: 120
+
+  threads:
+    aggressive:
+      persistent: true
+      prompt_file: intelligence/prompts/aggressive.md
+
+    conservative:
+      persistent: true
+      prompt_file: intelligence/prompts/conservative.md
+
+  response:
+    require_structured_output: true
+    schema_validation: true
+    failure_action: HOLD
+
+
+market:
+  stale_data_seconds: 120
+
+  aggressive:
+    timeframe: 15Min
+
+    universe:
+      - BTC/USD
+      - ETH/USD
+      - SOL/USD
+
+  conservative:
+    timeframe: 1Hour
+
+    universe:
+      - SPY
+      - QQQ
+      - VTI
+
+
+agents:
+
+  aggressive:
+    enabled: true
+
+    portfolio:
+      initial_budget: 10000
+
+    strategies:
+
+      momentum:
+        enabled: true
+        weight: 0.40
+
+      mean_reversion:
+        enabled: true
+        weight: 0.25
+
+      trend_following:
+        enabled: true
+        weight: 0.35
+
+      sentiment:
+        enabled: false
+        weight: 0.00
+
+    risk:
+      risk_per_trade: 0.02
+      max_position_pct: 0.15
+      max_total_exposure_pct: 0.60
+      max_daily_loss_pct: 0.05
+      max_drawdown_pct: 0.20
+      max_open_positions: 4
+
+    decision:
+      minimum_codex_confidence: 0.65
+
+
+  conservative:
+    enabled: true
+
+    portfolio:
+      initial_budget: 10000
+
+    strategies:
+
+      momentum:
+        enabled: false
+        weight: 0.00
+
+      mean_reversion:
+        enabled: true
+        weight: 0.30
+
+      trend_following:
+        enabled: true
+        weight: 0.70
+
+      sentiment:
+        enabled: false
+        weight: 0.00
+
+    risk:
+      risk_per_trade: 0.005
+      max_position_pct: 0.10
+      max_total_exposure_pct: 0.50
+      max_daily_loss_pct: 0.015
+      max_drawdown_pct: 0.08
+      max_open_positions: 5
+
+    decision:
+      minimum_codex_confidence: 0.70
+
+
+baselines:
+
+  aggressive_quant:
+    enabled: true
+    initial_budget: 10000
+
+  conservative_quant:
+    enabled: true
+    initial_budget: 10000
+
+  passive_benchmark:
+    enabled: true
+    symbol: SPY
+    initial_budget: 10000
+
+
+execution:
+
+  # Safety default.
+  dry_run: true
+
+  reconcile_orders: true
+
+  duplicate_order_window_seconds: 60
+
+  kill_switch:
+    enabled: true
+
+  allow_live_trading: false
+  allow_margin: false
+  allow_shorting: false
+  allow_options: false
+  allow_futures: false
+
+
+storage:
+
+  type: sqlite
+  database_url: sqlite:///data/trading.db
+
+
+logging:
+
+  decisions:
+    enabled: true
+    format: jsonl
+    path: logs/decisions.jsonl
+
+  codex:
+    enabled: true
+    path: logs/codex.jsonl
+
+
+runtime:
+  scheduler:
+    candle_grace_seconds: 5
+    reconciliation_interval_seconds: 300
+    health_interval_seconds: 60
+
+  stream:
+    max_reconnect_attempts: 5
+    reconnect_base_seconds: 1.0
+    reconnect_max_seconds: 30.0
+    startup_timeout_seconds: 15.0
+
+
+backtest:
+  initial_capital: 10000
+  slippage_bps: 2.0
+  transaction_cost_bps: 1.0
+  fill_fraction: 1.0
+  warmup_bars: 50
+  codex_signal_threshold: 0.65

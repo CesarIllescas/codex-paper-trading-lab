@@ -1,0 +1,72 @@
+[project]
+name = "codex-paper-trading-lab"
+version = "0.2.0"
+description = "Experimental Codex-powered paper-trading and strategy evaluation system"
+requires-python = ">=3.12"
+
+dependencies = [
+    "alpaca-py",
+    "pandas",
+    "numpy",
+    "pydantic>=2",
+    "pydantic-settings",
+    "python-dotenv>=1.0",
+    "PyYAML",
+    "sqlalchemy",
+    "aiosqlite",
+    "httpx",
+]
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = [
+    "agents*",
+    "backtest*",
+    "brokers*",
+    "config*",
+    "core*",
+    "evaluation*",
+    "intelligence*",
+    "market*",
+    "observability*",
+    "persistence*",
+    "portfolio*",
+    "risk*",
+    "runtime*",
+    "strategies*",
+]
+exclude = ["tests*", "data*", "logs*"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "pytest-mock",
+    "ruff",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "B",
+    "UP",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

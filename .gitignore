@@ -1,0 +1,52 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Local AI/development instructions (not application runtime prompts)
+AGENTS.md
+**/AGENTS.md
+.codex/
+.claude/
+PROJECT_PROMPT.md
+project-prompt.*
+pasted-text*.txt
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Testing / linting
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Runtime
+runtime/*
+!runtime/.gitkeep
+!runtime/*.py
+
+# Database
+data/*
+!data/.gitkeep
+
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/*
+!logs/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
